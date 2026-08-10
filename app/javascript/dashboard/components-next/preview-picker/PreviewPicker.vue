@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, onMounted, useId, useTemplateRef } from 'vue';
 import Icon from 'dashboard/components-next/icon/Icon.vue';
+import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 
 const props = defineProps({
   items: {
@@ -14,6 +15,10 @@ const props = defineProps({
   emptyLabel: {
     type: String,
     default: '',
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
   previewLayout: {
     type: String,
@@ -147,12 +152,9 @@ defineExpose({ scrollSelectedIntoView });
             </li>
           </template>
         </ul>
-        <div
-          v-if="!items.length"
-          role="status"
-          class="px-2 py-1.5 text-sm text-n-slate-11"
-        >
-          {{ emptyLabel }}
+        <div v-if="!items.length" role="status" class="px-2 py-1.5">
+          <Spinner v-if="isLoading" :size="16" class="text-n-slate-10" />
+          <span v-else class="text-sm text-n-slate-11">{{ emptyLabel }}</span>
         </div>
       </div>
     </div>
