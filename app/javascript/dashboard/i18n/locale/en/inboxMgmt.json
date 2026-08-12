@@ -1071,6 +1071,35 @@
         "LABEL": "Pre chat message",
         "PLACEHOLDER": "This message would be visible to the users along with the form"
       },
+      "WELCOME_PROMPT": {
+        "TITLE": "Welcome prompt",
+        "DESCRIPTION": "Configure the quick actions and suggested questions shown before a conversation starts.",
+        "SUGGESTED_QUESTIONS": {
+          "LABEL": "Suggested questions",
+          "DESCRIPTION": "Enter one question per line. There is no limit on the number of questions.",
+          "PLACEHOLDER": "Enter one question per line"
+        },
+        "QUICK_ACTIONS": {
+          "LABEL": "Quick actions",
+          "DESCRIPTION": "Each selected action sends its display name as a message.",
+          "ADD": "Add quick action",
+          "DISPLAY_NAME": "Display name",
+          "DISPLAY_NAME_PLACEHOLDER": "e.g. Billing question",
+          "ICON": "Icon",
+          "REMOVE": "Remove quick action",
+          "EMPTY": "No quick actions configured",
+          "ICONS": {
+            "CHAT": "Chat",
+            "DOCUMENT": "Document",
+            "LINK": "Link",
+            "SEARCH": "Search",
+            "REPLY": "Reply",
+            "ATTACH": "Attachment",
+            "GLOBE": "Globe",
+            "MORE": "More"
+          }
+        }
+      },
       "REQUIRE_EMAIL": {
         "LABEL": "Visitors should provide their name and email address before starting the chat"
       }

@@ -28,4 +28,36 @@ describe('Messages welcome prompt', () => {
       })
     ).toBe('');
   });
+
+  it('passes configured welcome prompt content when pre-chat is enabled', () => {
+    expect(
+      Messages.computed.welcomePrompt.call({
+        isLegacyWidgetContext: false,
+        preChatFormEnabled: true,
+        welcomeMessage: 'Welcome',
+        welcomePromptOptions: {
+          quickActions: [{ label: 'Billing', icon: 'chat' }],
+          suggestedQuestions: ['Where is my order?'],
+        },
+      })
+    ).toEqual({
+      message: 'Welcome',
+      quickActions: [{ label: 'Billing', icon: 'chat' }],
+      suggestedQuestions: ['Where is my order?'],
+    });
+  });
+
+  it('hides all welcome prompt content when pre-chat is disabled', () => {
+    expect(
+      Messages.computed.welcomePrompt.call({
+        isLegacyWidgetContext: false,
+        preChatFormEnabled: false,
+        welcomeMessage: 'Welcome',
+        welcomePromptOptions: {
+          quickActions: [{ label: 'Billing', icon: 'chat' }],
+          suggestedQuestions: ['Where is my order?'],
+        },
+      })
+    ).toEqual({ message: '', quickActions: [], suggestedQuestions: [] });
+  });
 });

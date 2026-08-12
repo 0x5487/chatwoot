@@ -858,6 +858,34 @@ RSpec.describe 'Inboxes API', type: :request do
         expect(response).to have_http_status(:success)
         expect(inbox.reload.allow_messages_after_resolved).to be_falsey
       end
+
+      it 'updates the webwidget welcome prompt configuration' do
+        web_widget = create(:channel_widget, account: account)
+        web_inbox = web_widget.inbox
+        welcome_prompt = {
+          quick_actions: [{ label: 'Billing', icon: 'chat' }],
+          suggested_questions: ['Where is my order?']
+        }
+
+        patch "/api/v1/accounts/#{account.id}/inboxes/#{web_inbox.id}",
+              headers: admin.create_new_auth_token,
+              params: {
+                channel: {
+                  pre_chat_form_options: {
+                    pre_chat_message: 'Welcome',
+                    pre_chat_fields: web_widget.pre_chat_form_options['pre_chat_fields'],
+                    welcome_prompt: welcome_prompt
+                  }
+                }
+              },
+              as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(web_widget.reload.pre_chat_form_options['welcome_prompt']).to eq(
+          'quick_actions' => [{ 'label' => 'Billing', 'icon' => 'chat' }],
+          'suggested_questions' => ['Where is my order?']
+        )
+      end
     end
 
     context 'when an authenticated user updates email inbox' do

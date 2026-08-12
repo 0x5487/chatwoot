@@ -1,3 +1,5 @@
+import { normalizeWelcomePrompt } from 'shared/helpers/welcomePrompt';
+
 export default {
   computed: {
     useInboxAvatarForBot() {
@@ -35,6 +37,10 @@ export default {
         preChatMessage,
         preChatFields,
       };
+    },
+    welcomePromptOptions() {
+      const options = window.chatwootWebChannel.preChatFormOptions || {};
+      return normalizeWelcomePrompt(options.welcome_prompt);
     },
     shouldShowPreChatForm() {
       const { preChatFields } = this.preChatFormOptions;

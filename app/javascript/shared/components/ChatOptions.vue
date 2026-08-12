@@ -52,7 +52,7 @@ export default {
         class="text-n-slate-12"
       />
     </h4>
-    <ul v-if="!hideFields" class="w-full">
+    <ul v-if="!hideFields" class="m-0 flex w-full list-none flex-col gap-2">
       <ChatOption
         v-for="option in options"
         :key="option.id"

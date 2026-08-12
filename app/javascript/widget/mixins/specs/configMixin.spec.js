@@ -72,7 +72,28 @@ describe('configMixin', () => {
       preChatMessage: '',
       preChatFields: preChatFields,
     });
+    expect(wrapper.vm.welcomePromptOptions).toEqual({
+      quickActions: [],
+      suggestedQuestions: [],
+    });
     expect(wrapper.vm.preChatFormEnabled).toBe(true);
     expect(wrapper.vm.shouldShowPreChatForm).toBe(true);
+  });
+
+  test('returns configured welcome prompt options', () => {
+    global.chatwootWebChannel.preChatFormOptions.welcome_prompt = {
+      quick_actions: [{ label: 'Billing', icon: 'chat' }],
+      suggested_questions: ['Where is my order?'],
+    };
+
+    const wrapper = shallowMount({
+      mixins: [configMixin],
+      template: '<div />',
+    });
+
+    expect(wrapper.vm.welcomePromptOptions).toEqual({
+      quickActions: [{ label: 'Billing', icon: 'chat' }],
+      suggestedQuestions: ['Where is my order?'],
+    });
   });
 });

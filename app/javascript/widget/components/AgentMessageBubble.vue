@@ -70,9 +70,9 @@ export default {
       this.$store.dispatch('message/update', messageResponse);
     },
     onOptionSelect(selectedOption) {
-      this.onResponse({
-        submittedValues: [selectedOption],
-        messageId: this.messageId,
+      this.$store.dispatch('conversation/sendMessage', {
+        content: selectedOption.title || selectedOption.value,
+        replyTo: null,
       });
     },
     onFormSubmit(formValues) {
@@ -117,7 +117,6 @@ export default {
       <ChatOptions
         :title="message"
         :options="messageContentAttributes.items"
-        :hide-fields="!!messageContentAttributes.submitted_values"
         @option-select="onOptionSelect"
       />
     </div>

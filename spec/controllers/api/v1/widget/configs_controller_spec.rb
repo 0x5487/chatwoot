@@ -31,6 +31,25 @@ RSpec.describe '/api/v1/widget/config', type: :request do
         response_data = response.parsed_body
         expect(response_data.keys).to include(*response_keys)
       end
+
+      it 'returns the configured welcome prompt in the widget config' do
+        web_widget.update!(
+          pre_chat_form_options: web_widget.pre_chat_form_options.merge(
+            'welcome_prompt' => {
+              'quick_actions' => [{ 'label' => 'Billing', 'icon' => 'chat' }],
+              'suggested_questions' => ['Where is my order?']
+            }
+          )
+        )
+
+        post '/api/v1/widget/config', params: params, as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body.dig('website_channel_config', 'pre_chat_form_options', 'welcome_prompt')).to eq(
+          'quick_actions' => [{ 'label' => 'Billing', 'icon' => 'chat' }],
+          'suggested_questions' => ['Where is my order?']
+        )
+      end
     end
 
     context 'with correct website token and valid X-Auth-Token' do

@@ -36,7 +36,11 @@ class Channel::WebWidget < ApplicationRecord
                     { pre_chat_form_options: [:pre_chat_message, :require_email,
                                               { pre_chat_fields:
                                                 [:field_type, :label, :placeholder, :name, :enabled, :type, :enabled, :required,
-                                                 :locale, { values: [] }, :regex_pattern, :regex_cue] }] },
+                                                 :locale, { values: [] }, :regex_pattern, :regex_cue] },
+                                              { welcome_prompt: [
+                                                { quick_actions: [:label, :icon] },
+                                                { suggested_questions: [] }
+                                              ] }] },
                     { selected_feature_flags: [] }].freeze
 
   before_validation :validate_pre_chat_options
@@ -82,10 +86,11 @@ class Channel::WebWidget < ApplicationRecord
   end
 
   def validate_pre_chat_options
-    return if pre_chat_form_options.with_indifferent_access['pre_chat_fields'].present?
+    options = (pre_chat_form_options || {}).with_indifferent_access
+    return if options['pre_chat_fields'].present?
 
-    self.pre_chat_form_options = {
-      pre_chat_message: 'Share your queries or comments here.',
+    self.pre_chat_form_options = options.merge(
+      pre_chat_message: options['pre_chat_message'] || 'Share your queries or comments here.',
       pre_chat_fields: [
         {
           'field_type': 'standard', 'label': 'Email Id', 'name': 'emailAddress', 'type': 'email', 'required': true, 'enabled': false
@@ -97,7 +102,7 @@ class Channel::WebWidget < ApplicationRecord
           'field_type': 'standard', 'label': 'Phone number', 'name': 'phoneNumber', 'type': 'text', 'required': false, 'enabled': false
         }
       ]
-    }
+    )
   end
 
   def create_contact_inbox(additional_attributes = {})

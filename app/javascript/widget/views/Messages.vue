@@ -24,6 +24,20 @@ export default {
       if (this.isLegacyWidgetContext || !this.preChatFormEnabled) return '';
       return this.preChatFormOptions.preChatMessage?.trim() || '';
     },
+    welcomePrompt() {
+      if (this.isLegacyWidgetContext || !this.preChatFormEnabled) {
+        return {
+          message: '',
+          quickActions: [],
+          suggestedQuestions: [],
+        };
+      }
+
+      return {
+        message: this.welcomeMessage,
+        ...this.welcomePromptOptions,
+      };
+    },
   },
   mounted() {
     this.$store.dispatch('conversation/setUserLastSeen');
@@ -39,6 +53,7 @@ export default {
       <ConversationWrap
         :grouped-messages="groupedMessages"
         :welcome-message="welcomeMessage"
+        :welcome-prompt="welcomePrompt"
       />
     </div>
     <ChatFooter class="px-5" />

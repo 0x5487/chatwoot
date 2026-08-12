@@ -1,86 +1,51 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
+import { getWelcomePromptIcon } from 'shared/helpers/welcomePrompt';
 
 const props = defineProps({
   message: {
     type: String,
     default: '',
   },
+  quickActions: {
+    type: Array,
+    default: () => [],
+  },
+  suggestedQuestions: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const store = useStore();
+const { t } = useI18n();
 const { formatMessage } = useMessageFormatter();
 const formattedMessage = computed(() => formatMessage(props.message, false));
 const isSendingSuggestion = ref(false);
 
-const prototypeCopy = {
-  quickActionsTitle: '您可以点击下方快捷入口获取帮助',
-  suggestedQuestionsTitle: '猜你想问',
-};
+const configuredQuickActions = computed(() =>
+  props.quickActions.filter(
+    action => typeof action?.label === 'string' && action.label.trim()
+  )
+);
 
-// Prototype content: this will move to the widget configuration after the layout is approved.
-const quickActions = [
-  {
-    label: '充值问题',
-    text: '我想咨询充值问题',
-    icon: '💳',
-    iconClass: 'bg-blue-50 text-blue-600',
-  },
-  {
-    label: '提款问题',
-    text: '我想咨询提款问题',
-    icon: '💵',
-    iconClass: 'bg-emerald-50 text-emerald-600',
-  },
-  {
-    label: '优惠活动',
-    text: '我想了解优惠活动',
-    icon: '🎁',
-    iconClass: 'bg-orange-50 text-orange-600',
-  },
-  {
-    label: '账户问题',
-    text: '我想咨询账户问题',
-    icon: '👤',
-    iconClass: 'bg-indigo-50 text-indigo-600',
-  },
-  {
-    label: '游戏问题',
-    text: '我想咨询游戏问题',
-    icon: '🎮',
-    iconClass: 'bg-violet-50 text-violet-600',
-  },
-  {
-    label: '代理合作',
-    text: '我想咨询代理合作',
-    icon: '🤝',
-    iconClass: 'bg-amber-50 text-amber-600',
-  },
-  {
-    label: '常见问题',
-    text: '我想查看常见问题',
-    icon: '❓',
-    iconClass: 'bg-rose-50 text-rose-600',
-  },
-  {
-    label: '转人工客服',
-    text: '我想转人工客服',
-    icon: '🎧',
-    iconClass: 'bg-red-50 text-red-600',
-  },
-];
-
-const suggestedQuestions = [
-  '提款未到账怎么办？',
-  '如何修改登录密码？',
-  '如何绑定银行卡？',
-];
+const configuredSuggestedQuestions = computed(() =>
+  props.suggestedQuestions.filter(
+    question => typeof question === 'string' && question.trim()
+  )
+);
 
 const isPromptVisible = computed(() => {
-  if (!props.message || !props.message.trim()) return false;
+  const hasConfiguredContent =
+    props.message.trim() ||
+    configuredQuickActions.value.length ||
+    configuredSuggestedQuestions.value.length;
+
+  if (!hasConfiguredContent) return false;
 
   const status =
     store?.getters?.['conversationAttributes/getConversationParams']?.status;
@@ -89,7 +54,7 @@ const isPromptVisible = computed(() => {
 });
 
 const selectSuggestion = async text => {
-  if (isSendingSuggestion.value) return;
+  if (isSendingSuggestion.value || !text?.trim()) return;
 
   isSendingSuggestion.value = true;
   try {
@@ -108,7 +73,7 @@ const selectSuggestion = async text => {
     v-show="isPromptVisible"
     class="welcome-prompt px-3 pb-3 pt-4 text-sm leading-5 text-n-slate-12"
   >
-    <div class="flex items-start gap-2">
+    <div v-if="message.trim()" class="flex items-start gap-2">
       <div
         class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-n-slate-4 text-n-slate-12"
         aria-hidden="true"
@@ -125,42 +90,44 @@ const selectSuggestion = async text => {
       </div>
     </div>
 
-    <div class="mt-3 rounded-xl border border-n-slate-4 bg-n-background p-3">
+    <div
+      v-if="configuredQuickActions.length"
+      class="mt-3 rounded-xl border border-n-slate-4 bg-n-background p-3"
+    >
       <p class="mb-2 text-xs font-medium text-n-slate-12">
-        {{ prototypeCopy.quickActionsTitle }}
+        {{ t('WELCOME_PROMPT.QUICK_ACTIONS_TITLE') }}
       </p>
       <div class="grid grid-cols-3 gap-2">
         <button
-          v-for="action in quickActions"
-          :key="action.label"
+          v-for="(action, index) in configuredQuickActions"
+          :key="`${action.label}-${index}`"
           type="button"
           class="flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border border-n-slate-4 bg-n-background px-1 py-2 text-center text-xs text-n-slate-12 transition hover:border-n-brand hover:bg-n-slate-2"
           :aria-label="action.label"
           :disabled="isSendingSuggestion"
-          @click="selectSuggestion(action.text)"
+          @click="selectSuggestion(action.label)"
         >
           <span
-            class="flex h-7 w-7 items-center justify-center rounded-lg text-base"
-            :class="action.iconClass"
+            class="flex h-7 w-7 items-center justify-center rounded-lg bg-n-slate-3 text-n-brand"
             aria-hidden="true"
           >
-            {{ action.icon }}
+            <FluentIcon :icon="getWelcomePromptIcon(action.icon)" size="18" />
           </span>
           <span class="truncate">{{ action.label }}</span>
         </button>
       </div>
     </div>
 
-    <div class="mt-3">
+    <div v-if="configuredSuggestedQuestions.length" class="mt-3">
       <p class="mb-2 text-xs font-semibold text-n-slate-12">
-        {{ prototypeCopy.suggestedQuestionsTitle }}
+        {{ t('WELCOME_PROMPT.SUGGESTED_QUESTIONS_TITLE') }}
       </p>
       <div
         class="overflow-hidden rounded-xl border border-n-slate-4 bg-n-background"
       >
         <button
-          v-for="question in suggestedQuestions"
-          :key="question"
+          v-for="(question, index) in configuredSuggestedQuestions"
+          :key="`${question}-${index}`"
           type="button"
           class="flex w-full items-center justify-between border-b border-n-slate-4 px-3 py-2.5 text-left text-xs text-n-slate-12 last:border-b-0 hover:bg-n-slate-2"
           :disabled="isSendingSuggestion"

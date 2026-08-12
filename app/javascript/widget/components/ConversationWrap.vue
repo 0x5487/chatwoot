@@ -26,6 +26,10 @@ export default {
       type: String,
       default: '',
     },
+    welcomePrompt: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup() {
     const { darkMode } = useDarkMode();
@@ -61,6 +65,19 @@ export default {
         (isConversationInPendingStatus && isLastMessageIncoming)
       );
     },
+    hasWelcomePrompt() {
+      const {
+        message,
+        quickActions = [],
+        suggestedQuestions = [],
+      } = this.welcomePrompt || {};
+      return Boolean(
+        this.welcomeMessage ||
+          message ||
+          quickActions.length ||
+          suggestedQuestions.length
+      );
+    },
   },
   watch: {
     allMessagesLoaded(value) {
@@ -68,7 +85,7 @@ export default {
       if (
         value &&
         !this.conversationSize &&
-        this.welcomeMessage &&
+        (this.welcomeMessage || this.hasWelcomePrompt) &&
         !this.initialScrollPositionSet
       ) {
         this.initialScrollPositionSet = true;
@@ -92,7 +109,10 @@ export default {
   methods: {
     ...mapActions('conversation', ['fetchOldConversations']),
     scrollToBottom() {
-      if (this.welcomeMessage && !this.initialScrollPositionSet) {
+      if (
+        (this.welcomeMessage || this.hasWelcomePrompt) &&
+        !this.initialScrollPositionSet
+      ) {
         this.$el.scrollTop = 0;
         this.previousScrollHeight = 0;
         if (this.conversationSize || this.allMessagesLoaded) {
@@ -124,7 +144,11 @@ export default {
 
 <template>
   <div class="conversation--container" :class="colorSchemeClass">
-    <WelcomePrompt :message="welcomeMessage" />
+    <WelcomePrompt
+      :message="welcomeMessage"
+      :quick-actions="welcomePrompt.quickActions"
+      :suggested-questions="welcomePrompt.suggestedQuestions"
+    />
     <div class="conversation-wrap" :class="{ 'is-typing': isAgentTyping }">
       <div v-if="isFetchingList" class="message--loader">
         <Spinner />
