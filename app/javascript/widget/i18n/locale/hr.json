@@ -95,6 +95,10 @@
     "REQUIRED": "Obavezno",
     "REGEX_ERROR": "Molimo unesite važeći unos"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Brze radnje",
+    "SUGGESTED_QUESTIONS_TITLE": "Predložena pitanja"
+  },
   "FILE_SIZE_LIMIT": "Datoteka prelazi ograničenje priloga za {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

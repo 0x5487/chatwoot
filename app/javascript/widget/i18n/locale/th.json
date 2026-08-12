@@ -95,6 +95,10 @@
     "REQUIRED": "โปรดระบุ",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "การดำเนินการด่วน",
+    "SUGGESTED_QUESTIONS_TITLE": "คำถามที่แนะนำ"
+  },
   "FILE_SIZE_LIMIT": "ไฟล์ใหเกินกว่า {MAXIMUM_FILE_UPLOAD_SIZE} ที่กำหนดไว้",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "Nepieciešams",
     "REGEX_ERROR": "Lūdzu, ievadiet pareizi"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Ātrās darbības",
+    "SUGGESTED_QUESTIONS_TITLE": "Ieteiktie jautājumi"
+  },
   "FILE_SIZE_LIMIT": "Fails pārsniedz {MAXIMUM_FILE_UPLOAD_SIZE} pielikuma lieluma ierobežojumu",
   "CHAT_FORM": {
     "INVALID": {

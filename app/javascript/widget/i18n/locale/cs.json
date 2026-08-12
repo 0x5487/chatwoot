@@ -95,6 +95,10 @@
     "REQUIRED": "Povinné",
     "REGEX_ERROR": "Zadejte prosím platnou hodnotu"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Rychlé akce",
+    "SUGGESTED_QUESTIONS_TITLE": "Navrhované otázky"
+  },
   "FILE_SIZE_LIMIT": "Soubor překračuje limit {MAXIMUM_FILE_UPLOAD_SIZE} přílohy",
   "CHAT_FORM": {
     "INVALID": {

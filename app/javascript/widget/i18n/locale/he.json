@@ -95,6 +95,10 @@
     "REQUIRED": "נדרש",
     "REGEX_ERROR": "אנא ספק קלט תקין"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "פעולות מהירות",
+    "SUGGESTED_QUESTIONS_TITLE": "שאלות מוצעות"
+  },
   "FILE_SIZE_LIMIT": "קובץ חורג ממגבלת גודל מקסימלי {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

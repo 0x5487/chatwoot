@@ -95,6 +95,10 @@
     "REQUIRED": "Kohustuslik",
     "REGEX_ERROR": "Palun sisesta korrektne väärtus"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Kiirtoimingud",
+    "SUGGESTED_QUESTIONS_TITLE": "Soovitatud küsimused"
+  },
   "FILE_SIZE_LIMIT": "Fail ületab {MAXIMUM_FILE_UPLOAD_SIZE} manuse limiidi",
   "CHAT_FORM": {
     "INVALID": {

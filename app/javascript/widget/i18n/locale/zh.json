@@ -95,6 +95,10 @@
     "REQUIRED": "必填项",
     "REGEX_ERROR": "请提供一个有效的值"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "快捷入口",
+    "SUGGESTED_QUESTIONS_TITLE": "猜你想问"
+  },
   "FILE_SIZE_LIMIT": "文件超过大小 {MAXIMUM_FILE_UPLOAD_SIZE} 附件限制",
   "CHAT_FORM": {
     "INVALID": {

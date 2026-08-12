@@ -95,6 +95,10 @@
     "REQUIRED": "Obrigatório",
     "REGEX_ERROR": "Forneça uma entrada válida"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Ações rápidas",
+    "SUGGESTED_QUESTIONS_TITLE": "Perguntas sugeridas"
+  },
   "FILE_SIZE_LIMIT": "O arquivo excede o limite de anexos {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

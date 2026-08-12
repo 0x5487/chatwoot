@@ -95,6 +95,10 @@
     "REQUIRED": "Diperlukan",
     "REGEX_ERROR": "Tolong berikan masukan yang tepat"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Tindakan cepat",
+    "SUGGESTED_QUESTIONS_TITLE": "Pertanyaan yang disarankan"
+  },
   "FILE_SIZE_LIMIT": "File melebihi batas {MAXIMUM_FILE_UPLOAD_SIZE} lampiran",
   "CHAT_FORM": {
     "INVALID": {

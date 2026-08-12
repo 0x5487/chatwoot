@@ -95,6 +95,10 @@
     "REQUIRED": "Обязательно",
     "REGEX_ERROR": "Пожалуйста, предоставьте корректные данные"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Быстрые действия",
+    "SUGGESTED_QUESTIONS_TITLE": "Предлагаемые вопросы"
+  },
   "FILE_SIZE_LIMIT": "Превышен размер загружаемого файла - {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

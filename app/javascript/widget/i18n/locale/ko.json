@@ -95,6 +95,10 @@
     "REQUIRED": "필수",
     "REGEX_ERROR": "올바른 값을 입력하세요."
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "빠른 작업",
+    "SUGGESTED_QUESTIONS_TITLE": "추천 질문"
+  },
   "FILE_SIZE_LIMIT": "첨부파일이 최대 {MAXIMUM_FILE_UPLOAD_SIZE} 용량 제한을 넘어섭니다.",
   "CHAT_FORM": {
     "INVALID": {

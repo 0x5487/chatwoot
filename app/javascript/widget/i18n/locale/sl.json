@@ -95,6 +95,10 @@
     "REQUIRED": "Zahtevano",
     "REGEX_ERROR": "Vnesite veljaven vnos"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Hitra dejanja",
+    "SUGGESTED_QUESTIONS_TITLE": "Predlagana vprašanja"
+  },
   "FILE_SIZE_LIMIT": "Datoteka presega omejitev {MAXIMUM_FILE_UPLOAD_SIZE} za priloge",
   "CHAT_FORM": {
     "INVALID": {

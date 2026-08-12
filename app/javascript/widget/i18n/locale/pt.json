@@ -95,6 +95,10 @@
     "REQUIRED": "Obrigatório",
     "REGEX_ERROR": "Por favor, introduza um valor válido"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Ações rápidas",
+    "SUGGESTED_QUESTIONS_TITLE": "Perguntas sugeridas"
+  },
   "FILE_SIZE_LIMIT": "O ficheiro ultrapassa o tamanho limite {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

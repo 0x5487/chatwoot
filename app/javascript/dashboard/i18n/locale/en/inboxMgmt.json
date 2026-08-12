@@ -1089,14 +1089,14 @@
           "REMOVE": "Remove quick action",
           "EMPTY": "No quick actions configured",
           "ICONS": {
-            "CHAT": "Chat",
-            "DOCUMENT": "Document",
-            "LINK": "Link",
-            "SEARCH": "Search",
-            "REPLY": "Reply",
-            "ATTACH": "Attachment",
-            "GLOBE": "Globe",
-            "MORE": "More"
+            "CREDIT_CARD": "Credit card",
+            "CURRENCY": "Cash",
+            "GIFT": "Promotion",
+            "ACCOUNT": "Account",
+            "GAME": "Game",
+            "PARTNERSHIP": "Partnership",
+            "FAQ": "FAQ",
+            "HUMAN_AGENT": "Human agent"
           }
         }
       },

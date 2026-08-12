@@ -95,6 +95,10 @@
     "REQUIRED": "Required",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "त्वरित कार्रवाइयाँ",
+    "SUGGESTED_QUESTIONS_TITLE": "सुझाए गए प्रश्न"
+  },
   "FILE_SIZE_LIMIT": "File exceeds the {MAXIMUM_FILE_UPLOAD_SIZE} attachment limit",
   "CHAT_FORM": {
     "INVALID": {

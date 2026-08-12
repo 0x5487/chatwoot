@@ -95,6 +95,10 @@
     "REQUIRED": "Bắt buộc",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Thao tác nhanh",
+    "SUGGESTED_QUESTIONS_TITLE": "Câu hỏi gợi ý"
+  },
   "FILE_SIZE_LIMIT": "Tệp vượt quá kích thước giới hạn {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

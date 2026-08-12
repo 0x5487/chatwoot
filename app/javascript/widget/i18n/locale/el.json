@@ -95,6 +95,10 @@
     "REQUIRED": "Υποχρεωτικό",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Γρήγορες ενέργειες",
+    "SUGGESTED_QUESTIONS_TITLE": "Προτεινόμενες ερωτήσεις"
+  },
   "FILE_SIZE_LIMIT": "Το αρχείο υπερβαίνει το όριο συνημμένου {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "Majburiy",
     "REGEX_ERROR": "Iltimos, to'g'ri ma'lumot kiriting"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Tezkor amallar",
+    "SUGGESTED_QUESTIONS_TITLE": "Tavsiya etilgan savollar"
+  },
   "FILE_SIZE_LIMIT": "Fayl {MAXIMUM_FILE_UPLOAD_SIZE} biriktirma chegarasidan oshib ketdi",
   "CHAT_FORM": {
     "INVALID": {

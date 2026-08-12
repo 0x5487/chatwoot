@@ -95,6 +95,10 @@
     "REQUIRED": "Required",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "விரைவு செயல்கள்",
+    "SUGGESTED_QUESTIONS_TITLE": "பரிந்துரைக்கப்பட்ட கேள்விகள்"
+  },
   "FILE_SIZE_LIMIT": "File exceeds the {MAXIMUM_FILE_UPLOAD_SIZE} attachment limit",
   "CHAT_FORM": {
     "INVALID": {

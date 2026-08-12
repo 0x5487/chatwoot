@@ -95,6 +95,10 @@
     "REQUIRED": "مطلوب",
     "REGEX_ERROR": "الرجاء تقديم مدخل صحيح"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "إجراءات سريعة",
+    "SUGGESTED_QUESTIONS_TITLE": "الأسئلة المقترحة"
+  },
   "FILE_SIZE_LIMIT": "حجم الملف يتجاوز حد الاقصى وهو {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "ضروری",
     "REGEX_ERROR": "لطفا یک ورودی معتبر ارائه دهید"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "اقدامات سریع",
+    "SUGGESTED_QUESTIONS_TITLE": "سؤالات پیشنهادی"
+  },
   "FILE_SIZE_LIMIT": "فایل ضمیمه شده بیشتر از {MAXIMUM_FILE_UPLOAD_SIZE} است",
   "CHAT_FORM": {
     "INVALID": {

@@ -1,36 +1,48 @@
 export const WELCOME_PROMPT_ICON_OPTIONS = [
   {
     value: 'chat',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.CHAT',
+    emoji: '💳',
+    label:
+      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.CREDIT_CARD',
   },
   {
     value: 'document',
+    emoji: '💵',
     label:
-      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.DOCUMENT',
+      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.CURRENCY',
   },
   {
     value: 'link',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.LINK',
+    emoji: '🎁',
+    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.GIFT',
   },
   {
     value: 'search',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.SEARCH',
+    emoji: '👤',
+    label:
+      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.ACCOUNT',
   },
   {
     value: 'arrow-reply',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.REPLY',
+    emoji: '🎮',
+    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.GAME',
   },
   {
     value: 'attach',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.ATTACH',
+    emoji: '🤝',
+    label:
+      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.PARTNERSHIP',
   },
   {
     value: 'globe',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.GLOBE',
+    emoji: '❓',
+    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.FAQ',
   },
   {
     value: 'more-vertical',
-    label: 'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.MORE',
+    emoji: '🎧',
+    label:
+      'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICONS.HUMAN_AGENT',
   },
 ];
 
@@ -38,12 +50,15 @@ export const DEFAULT_WELCOME_PROMPT_ICON = WELCOME_PROMPT_ICON_OPTIONS[0].value;
 
 const cleanText = value => (typeof value === 'string' ? value.trim() : '');
 
-export const getWelcomePromptIcon = icon => {
-  const isSupportedIcon = WELCOME_PROMPT_ICON_OPTIONS.some(
-    option => option.value === icon
-  );
-  return isSupportedIcon ? icon : DEFAULT_WELCOME_PROMPT_ICON;
-};
+export const getWelcomePromptIconOption = icon =>
+  WELCOME_PROMPT_ICON_OPTIONS.find(option => option.value === icon) ||
+  WELCOME_PROMPT_ICON_OPTIONS[0];
+
+export const getWelcomePromptIcon = icon =>
+  getWelcomePromptIconOption(icon).value;
+
+export const getWelcomePromptIconEmoji = icon =>
+  getWelcomePromptIconOption(icon).emoji;
 
 export const normalizeWelcomePrompt = (prompt = {}) => {
   const safePrompt = prompt && typeof prompt === 'object' ? prompt : {};

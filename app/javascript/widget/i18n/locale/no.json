@@ -95,6 +95,10 @@
     "REQUIRED": "Påkrevd",
     "REGEX_ERROR": "Vennligst oppgi gyldige opplysninger"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Hurtighandlinger",
+    "SUGGESTED_QUESTIONS_TITLE": "Foreslåtte spørsmål"
+  },
   "FILE_SIZE_LIMIT": "Filens størrelse overskrider grensen på {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

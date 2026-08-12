@@ -95,6 +95,10 @@
     "REQUIRED": "Задължително",
     "REGEX_ERROR": "Моля, въведете валидни данни"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Бързи действия",
+    "SUGGESTED_QUESTIONS_TITLE": "Предложени въпроси"
+  },
   "FILE_SIZE_LIMIT": "Файлът надхвърля лимита от {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

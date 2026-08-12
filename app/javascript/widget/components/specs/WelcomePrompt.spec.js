@@ -42,6 +42,7 @@ describe('WelcomePrompt', () => {
     });
 
     expect(wrapper.text()).toContain('Billing');
+    expect(wrapper.text()).toContain('💳');
     expect(wrapper.text()).toContain('How long does it take?');
     expect(wrapper.text()).not.toContain('充值问题');
   });

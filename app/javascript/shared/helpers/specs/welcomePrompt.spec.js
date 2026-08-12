@@ -1,7 +1,9 @@
 import {
   getWelcomePromptIcon,
+  getWelcomePromptIconEmoji,
   normalizeWelcomePrompt,
   serializeWelcomePrompt,
+  WELCOME_PROMPT_ICON_OPTIONS,
 } from '../welcomePrompt';
 
 describe('welcome prompt helpers', () => {
@@ -40,6 +42,20 @@ describe('welcome prompt helpers', () => {
 
   it('falls back to a supported icon for stale configuration', () => {
     expect(getWelcomePromptIcon('invalid-icon')).toBe('chat');
+  });
+
+  it('uses the original hardcoded emoji icons', () => {
+    expect(WELCOME_PROMPT_ICON_OPTIONS.map(option => option.emoji)).toEqual([
+      '💳',
+      '💵',
+      '🎁',
+      '👤',
+      '🎮',
+      '🤝',
+      '❓',
+      '🎧',
+    ]);
+    expect(getWelcomePromptIconEmoji('document')).toBe('💵');
   });
 
   it('treats missing prompt values as empty configuration', () => {

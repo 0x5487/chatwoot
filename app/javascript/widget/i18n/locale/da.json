@@ -95,6 +95,10 @@
     "REQUIRED": "Påkrævet",
     "REGEX_ERROR": "Angiv venligst et gyldigt input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Hurtige handlinger",
+    "SUGGESTED_QUESTIONS_TITLE": "Foreslåede spørgsmål"
+  },
   "FILE_SIZE_LIMIT": "Filen overskrider grænsen på {MAXIMUM_FILE_UPLOAD_SIZE} for vedhæftede filer",
   "CHAT_FORM": {
     "INVALID": {

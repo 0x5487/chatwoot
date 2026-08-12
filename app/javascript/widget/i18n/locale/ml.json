@@ -95,6 +95,10 @@
     "REQUIRED": "Required",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "ദ്രുത പ്രവർത്തനങ്ങൾ",
+    "SUGGESTED_QUESTIONS_TITLE": "നിർദ്ദേശിച്ച ചോദ്യങ്ങൾ"
+  },
   "FILE_SIZE_LIMIT": "ഫയൽ {MAXIMUM_FILE_UPLOAD_SIZE} അറ്റാച്ച്‌മെന്റ് പരിധി കവിഞ്ഞു",
   "CHAT_FORM": {
     "INVALID": {

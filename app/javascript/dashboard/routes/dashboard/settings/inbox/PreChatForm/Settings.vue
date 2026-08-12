@@ -213,9 +213,21 @@ onMounted(() => {
               <div
                 v-for="(action, index) in quickActions"
                 :key="index"
-                class="grid grid-cols-[minmax(0,1fr)_minmax(10rem,14rem)_auto] items-end gap-2"
+                class="grid grid-cols-1 items-end gap-2 md:grid-cols-[minmax(10rem,12rem)_minmax(10rem,14rem)_auto]"
               >
-                <label class="flex flex-col gap-1 text-xs text-n-slate-11">
+                <div class="flex flex-col gap-1 text-xs text-n-slate-11">
+                  <span>
+                    {{
+                      $t(
+                        'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICON'
+                      )
+                    }}
+                  </span>
+                  <QuickActionIconPicker v-model="action.icon" />
+                </div>
+                <label
+                  class="flex max-w-56 flex-col gap-1 text-xs text-n-slate-11"
+                >
                   {{
                     $t(
                       'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.DISPLAY_NAME'
@@ -229,19 +241,9 @@ onMounted(() => {
                         'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.DISPLAY_NAME_PLACEHOLDER'
                       )
                     "
-                    class="h-10 w-full rounded-lg border border-n-weak bg-n-alpha-black2 px-3 text-sm text-n-slate-12 placeholder:text-n-slate-10 focus:border-n-brand focus:outline-none"
+                    class="!mb-0 h-10 w-full rounded-lg border border-n-weak bg-n-alpha-black2 px-3 text-sm text-n-slate-12 placeholder:text-n-slate-10 focus:border-n-brand focus:outline-none"
                   />
                 </label>
-                <div class="flex flex-col gap-1 text-xs text-n-slate-11">
-                  <span>
-                    {{
-                      $t(
-                        'INBOX_MGMT.PRE_CHAT_FORM.WELCOME_PROMPT.QUICK_ACTIONS.ICON'
-                      )
-                    }}
-                  </span>
-                  <QuickActionIconPicker v-model="action.icon" />
-                </div>
                 <button
                   type="button"
                   class="mb-1 flex size-8 items-center justify-center rounded-md text-n-ruby-9 hover:bg-n-ruby-9/10"

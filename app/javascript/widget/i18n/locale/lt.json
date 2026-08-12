@@ -95,6 +95,10 @@
     "REQUIRED": "Reikalingas",
     "REGEX_ERROR": "Pateikite teisingą lauko reikšmę"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Spartieji veiksmai",
+    "SUGGESTED_QUESTIONS_TITLE": "Siūlomi klausimai"
+  },
   "FILE_SIZE_LIMIT": "Failas viršija {MAXIMUM_FILE_UPLOAD_SIZE} apribojimą",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "Obligatoriskt",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Snabbåtgärder",
+    "SUGGESTED_QUESTIONS_TITLE": "Föreslagna frågor"
+  },
   "FILE_SIZE_LIMIT": "Filen överskrider gränsen för {MAXIMUM_FILE_UPLOAD_SIZE} bifogade filer",
   "CHAT_FORM": {
     "INVALID": {

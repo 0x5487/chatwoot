@@ -95,6 +95,10 @@
     "REQUIRED": "Necessari",
     "REGEX_ERROR": "Proporciona una entrada vàlida"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Accions ràpides",
+    "SUGGESTED_QUESTIONS_TITLE": "Preguntes suggerides"
+  },
   "FILE_SIZE_LIMIT": "El fitxer supera el límit de {MAXIMUM_FILE_UPLOAD_SIZE} fitxers adjunts",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "必須",
     "REGEX_ERROR": "有効な入力を提供してください"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "クイックアクション",
+    "SUGGESTED_QUESTIONS_TITLE": "おすすめの質問"
+  },
   "FILE_SIZE_LIMIT": "添付ファイルサイズが上限 {MAXIMUM_FILE_UPLOAD_SIZE} を超えています",
   "CHAT_FORM": {
     "INVALID": {

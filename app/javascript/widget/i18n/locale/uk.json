@@ -95,6 +95,10 @@
     "REQUIRED": "Обов'язково",
     "REGEX_ERROR": "Будь ласка, введіть коректний текст"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Швидкі дії",
+    "SUGGESTED_QUESTIONS_TITLE": "Запропоновані запитання"
+  },
   "FILE_SIZE_LIMIT": "Файл перевищує ліміт вкладення {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
     "INVALID": {

@@ -95,6 +95,10 @@
     "REQUIRED": "Nauðsynlegt",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Flýtiaðgerðir",
+    "SUGGESTED_QUESTIONS_TITLE": "Tillögur að spurningum"
+  },
   "FILE_SIZE_LIMIT": "Skráin fer framyfir hámarksstærð viðhengja ({MAXIMUM_FILE_UPLOAD_SIZE})",
   "CHAT_FORM": {
     "INVALID": {

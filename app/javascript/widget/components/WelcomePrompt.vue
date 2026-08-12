@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
-import { getWelcomePromptIcon } from 'shared/helpers/welcomePrompt';
+import { getWelcomePromptIconEmoji } from 'shared/helpers/welcomePrompt';
 
 const props = defineProps({
   message: {
@@ -108,10 +108,10 @@ const selectSuggestion = async text => {
           @click="selectSuggestion(action.label)"
         >
           <span
-            class="flex h-7 w-7 items-center justify-center rounded-lg bg-n-slate-3 text-n-brand"
+            class="flex h-7 w-7 items-center justify-center rounded-lg bg-n-slate-3 text-xl leading-none"
             aria-hidden="true"
           >
-            <FluentIcon :icon="getWelcomePromptIcon(action.icon)" size="18" />
+            {{ getWelcomePromptIconEmoji(action.icon) }}
           </span>
           <span class="truncate">{{ action.label }}</span>
         </button>

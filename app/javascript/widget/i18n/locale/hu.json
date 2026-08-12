@@ -95,6 +95,10 @@
     "REQUIRED": "Kötelező",
     "REGEX_ERROR": "Please provide a valid input"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Gyors műveletek",
+    "SUGGESTED_QUESTIONS_TITLE": "Javasolt kérdések"
+  },
   "FILE_SIZE_LIMIT": "A file mérete meghaladja a {MAXIMUM_FILE_UPLOAD_SIZE} limitet",
   "CHAT_FORM": {
     "INVALID": {

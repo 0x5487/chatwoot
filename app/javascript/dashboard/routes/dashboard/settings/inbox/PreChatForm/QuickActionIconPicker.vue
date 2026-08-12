@@ -4,7 +4,7 @@ import { OnClickOutside } from '@vueuse/components';
 import { useI18n } from 'vue-i18n';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import {
-  getWelcomePromptIcon,
+  getWelcomePromptIconOption,
   WELCOME_PROMPT_ICON_OPTIONS,
 } from 'shared/helpers/welcomePrompt';
 
@@ -19,12 +19,8 @@ const emit = defineEmits(['update:modelValue']);
 const { t } = useI18n();
 const isOpen = ref(false);
 
-const selectedIcon = computed(() => getWelcomePromptIcon(props.modelValue));
-const selectedOption = computed(
-  () =>
-    WELCOME_PROMPT_ICON_OPTIONS.find(
-      option => option.value === selectedIcon.value
-    ) || WELCOME_PROMPT_ICON_OPTIONS[0]
+const selectedOption = computed(() =>
+  getWelcomePromptIconOption(props.modelValue)
 );
 
 const selectIcon = icon => {
@@ -48,7 +44,9 @@ const selectIcon = icon => {
         @keydown.esc="isOpen = false"
       >
         <span class="flex items-center gap-2">
-          <FluentIcon :icon="selectedOption.value" size="18" />
+          <span class="text-xl leading-none" aria-hidden="true">
+            {{ selectedOption.emoji }}
+          </span>
           <!-- eslint-disable-next-line @intlify/vue-i18n/no-dynamic-keys -->
           <span>{{ t(selectedOption.label) }}</span>
         </span>
@@ -66,10 +64,12 @@ const selectIcon = icon => {
           type="button"
           role="option"
           class="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm text-n-slate-12 hover:bg-n-alpha-2"
-          :aria-selected="option.value === selectedIcon"
+          :aria-selected="option.value === selectedOption.value"
           @click="selectIcon(option.value)"
         >
-          <FluentIcon :icon="option.value" size="18" />
+          <span class="text-xl leading-none" aria-hidden="true">
+            {{ option.emoji }}
+          </span>
           <!-- eslint-disable-next-line @intlify/vue-i18n/no-dynamic-keys -->
           <span>{{ t(option.label) }}</span>
         </button>

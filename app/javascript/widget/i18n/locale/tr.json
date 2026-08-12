@@ -95,6 +95,10 @@
     "REQUIRED": "Zorunlu",
     "REGEX_ERROR": "Lütfen geçerli bir giriş yapın"
   },
+  "WELCOME_PROMPT": {
+    "QUICK_ACTIONS_TITLE": "Hızlı işlemler",
+    "SUGGESTED_QUESTIONS_TITLE": "Önerilen sorular"
+  },
   "FILE_SIZE_LIMIT": "Dosya {MAXIMUM_FILE_UPLOAD_SIZE} sınırını aşıyor",
   "CHAT_FORM": {
     "INVALID": {
