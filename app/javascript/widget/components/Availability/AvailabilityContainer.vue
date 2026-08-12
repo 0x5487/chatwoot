@@ -23,6 +23,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  textColor: {
+    type: String,
+    default: '',
+  },
 });
 
 const { t } = useI18n();
@@ -81,6 +85,7 @@ const headerText = computed(() =>
         :is-in-working-hours="isInWorkingHours"
         :class="textClasses"
         class="text-n-slate-11"
+        :style="textColor ? { color: textColor } : undefined"
       />
     </div>
 

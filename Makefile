@@ -1,9 +1,10 @@
 # Variables
-APP_NAME := chatwoot
+APP_NAME ?= jasonsoft/chatwoot:latest
 RAILS_ENV ?= development
 LOCAL_COMPOSE_FILE := docker-compose.local.yaml
 LOCAL_COMPOSE_UP := docker compose --env-file .env -f $(LOCAL_COMPOSE_FILE) up -d --wait postgres redis
 RBENV_INIT := eval "$$(rbenv init -)"
+DOCKER_PLATFORM ?= linux/amd64
 
 # Targets
 setup:
@@ -67,7 +68,11 @@ debug:
 debug_worker:
 	overmind connect worker
 
-docker: 
-	docker build -t $(APP_NAME) -f ./docker/Dockerfile .
+docker:
+	docker buildx build \
+		--platform $(DOCKER_PLATFORM) \
+		--load \
+		-t $(APP_NAME) \
+		-f ./docker/Dockerfile .
 
 .PHONY: setup db_create db_migrate db_seed db_reset db console server burn docker run force_run force_run_tunnel debug debug_worker

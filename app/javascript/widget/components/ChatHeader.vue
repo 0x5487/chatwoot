@@ -1,7 +1,8 @@
 <script setup>
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { getContrastingTextColor } from '@chatwoot/utils';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import HeaderActions from './HeaderActions.vue';
 import AvailabilityContainer from 'widget/components/Availability/AvailabilityContainer.vue';
@@ -21,6 +22,18 @@ const availableAgents = toRef(props, 'availableAgents');
 const router = useRouter();
 const store = useStore();
 const { isOnline } = useAvailability(availableAgents);
+const widgetColor = computed(
+  () => store.getters['appConfig/getWidgetColor'] || ''
+);
+const headerTextColor = computed(() =>
+  widgetColor.value ? getContrastingTextColor(widgetColor.value) : ''
+);
+const headerStyle = computed(() =>
+  widgetColor.value ? { backgroundColor: widgetColor.value } : {}
+);
+const headerTextStyle = computed(() =>
+  headerTextColor.value ? { color: headerTextColor.value } : {}
+);
 
 const onBackButtonClick = () => {
   if (
@@ -35,14 +48,22 @@ const onBackButtonClick = () => {
 </script>
 
 <template>
-  <header class="flex justify-between w-full p-5 bg-n-background gap-2">
+  <header
+    class="flex justify-between w-full p-5 bg-n-background gap-2"
+    :style="headerStyle"
+  >
     <div class="flex items-center">
       <button
         v-if="showBackButton"
         class="px-2 ltr:-ml-3 rtl:-mr-3"
         @click="onBackButtonClick"
       >
-        <FluentIcon icon="chevron-left" size="24" class="text-n-slate-12" />
+        <FluentIcon
+          icon="chevron-left"
+          size="24"
+          class="text-n-slate-12"
+          :style="headerTextStyle"
+        />
       </button>
       <img
         v-if="avatarUrl"
@@ -50,9 +71,10 @@ const onBackButtonClick = () => {
         :src="avatarUrl"
         alt="avatar"
       />
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1" :style="headerTextStyle">
         <div
           class="flex items-center text-base font-medium leading-4 text-n-slate-12"
+          :style="headerTextStyle"
         >
           <span v-dompurify-html="title" class="ltr:mr-1 rtl:ml-1" />
           <div
@@ -65,9 +87,13 @@ const onBackButtonClick = () => {
           :show-header="false"
           :show-avatars="false"
           text-classes="text-xs leading-3"
+          :text-color="headerTextColor"
         />
       </div>
     </div>
-    <HeaderActions :show-popout-button="showPopoutButton" />
+    <HeaderActions
+      :show-popout-button="showPopoutButton"
+      :icon-color="headerTextColor"
+    />
   </header>
 </template>
