@@ -238,6 +238,14 @@ export default {
         this.handleUnreadNotificationDot();
       }
     },
+    cancelNewConversation() {
+      if (
+        this.$store.getters['conversation/getIsStartingNewConversation'] &&
+        !this.$store.getters['conversation/getIsSending']
+      ) {
+        this.$store.dispatch('conversation/cancelNewConversation');
+      }
+    },
     handleUnreadNotificationDot() {
       const { unreadMessageCount } = this;
       if (this.isIFrame) {
@@ -323,20 +331,31 @@ export default {
           this.$store.dispatch('appConfig/toggleWidgetOpen', message.isOpen);
 
           const shouldShowMessageView =
-            ['home'].includes(this.$route.name) &&
-            message.isOpen &&
-            this.messageCount;
+            (this.isIFrame &&
+              ['home', 'unread-messages', 'prechat-form'].includes(
+                this.$route.name
+              ) &&
+              message.isOpen &&
+              isEmptyObject(this.activeCampaign)) ||
+            (this.isRNWebView &&
+              this.$route.name === 'home' &&
+              message.isOpen &&
+              this.messageCount);
           const shouldShowHomeView =
             !message.isOpen &&
             ['unread-messages', 'campaigns'].includes(this.$route.name);
 
           if (shouldShowMessageView) {
+            this.unsetUnreadView();
             this.router.replace({ name: 'messages' });
           }
           if (shouldShowHomeView) {
             this.$store.dispatch('conversation/setUserLastSeen');
             this.unsetUnreadView();
             this.router.replace({ name: 'home' });
+          }
+          if (!message.isOpen && this.isIFrame) {
+            this.cancelNewConversation();
           }
           if (!message.isOpen) {
             this.resetCampaign();

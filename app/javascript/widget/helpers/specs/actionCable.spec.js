@@ -22,6 +22,7 @@ describe('Widget ActionCableConnector', () => {
         getters: {
           getCurrentAccountId: 1,
           getCurrentUserID: 1,
+          'conversation/getIsStartingNewConversation': false,
         },
       },
     };
@@ -49,5 +50,25 @@ describe('Widget ActionCableConnector', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       'conversationAttributes/getAttributes'
     );
+  });
+
+  it('does not reconnect or sync the previous conversation while starting a new one', () => {
+    app.$store.getters['conversation/getIsStartingNewConversation'] = true;
+
+    connector.onReconnect();
+
+    expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
+  it('ignores messages from the previous conversation while starting a new one', () => {
+    app.$store.getters['conversation/getIsStartingNewConversation'] = true;
+
+    connector.onMessageCreated({
+      id: 42,
+      conversation_id: 7,
+      content: 'old message',
+    });
+
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 });

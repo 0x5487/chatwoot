@@ -1,8 +1,9 @@
 <script setup>
-import { IFrameHelper } from 'widget/helpers/utils';
-import { CHATWOOT_ON_START_CONVERSATION } from '../constants/sdkEvents';
 import AvailabilityContainer from 'widget/components/Availability/AvailabilityContainer.vue';
 import { useMapGetter } from 'dashboard/composables/store.js';
+import { IFrameHelper, RNHelper } from 'widget/helpers/utils';
+import { CHATWOOT_ON_START_CONVERSATION } from '../constants/sdkEvents';
+import { isPopout } from 'widget/helpers/urlParamsHelper';
 
 const props = defineProps({
   availableAgents: { type: Array, default: () => [] },
@@ -13,9 +14,14 @@ const emit = defineEmits(['startConversation']);
 
 const widgetColor = useMapGetter('appConfig/getWidgetColor');
 
+const shouldEmitLegacyStartEvent = () =>
+  !props.hasConversation &&
+  ((!IFrameHelper.isIFrame() && isPopout(window.location.search)) ||
+    !!RNHelper.isRNWebView());
+
 const startConversation = () => {
   emit('startConversation');
-  if (!props.hasConversation) {
+  if (shouldEmitLegacyStartEvent()) {
     IFrameHelper.sendMessage({
       event: 'onEvent',
       eventIdentifier: CHATWOOT_ON_START_CONVERSATION,

@@ -182,6 +182,35 @@ describe('#mutations', () => {
     });
   });
 
+  describe('#startNewConversation and #cancelNewConversation', () => {
+    it('restores the resolved conversation when a new conversation is cancelled', () => {
+      const previousMessages = { 1: { id: 1, content: 'previous message' } };
+      const state = {
+        conversations: previousMessages,
+        meta: { userLastSeenAt: 123 },
+        lastMessageId: 1,
+        uiFlags: {
+          allMessagesLoaded: false,
+          isFetchingList: false,
+          isAgentTyping: false,
+          isStartingNewConversation: false,
+        },
+      };
+
+      mutations.startNewConversation(state);
+
+      expect(state.conversations).toEqual({});
+      expect(state.uiFlags.isStartingNewConversation).toBe(true);
+
+      mutations.cancelNewConversation(state);
+
+      expect(state.conversations).toEqual(previousMessages);
+      expect(state.meta).toEqual({ userLastSeenAt: 123 });
+      expect(state.lastMessageId).toBe(1);
+      expect(state.uiFlags.isStartingNewConversation).toBe(false);
+    });
+  });
+
   describe('#setPendingCustomAttributes', () => {
     it('merges custom attributes into pending state', () => {
       const state = { pendingCustomAttributes: { existing: 'value' } };

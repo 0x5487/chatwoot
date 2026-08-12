@@ -2,7 +2,12 @@ import { MESSAGE_TYPE } from 'widget/helpers/constants';
 import { isASubmittedFormMessage } from 'shared/helpers/MessageTypeHelper';
 
 import getUuid from '../../../helpers/uuid';
-export const createTemporaryMessage = ({ attachments, content, replyTo }) => {
+export const createTemporaryMessage = ({
+  attachments,
+  content,
+  replyTo,
+  newConversation,
+}) => {
   const timestamp = new Date().getTime() / 1000;
   return {
     id: getUuid(),
@@ -12,6 +17,7 @@ export const createTemporaryMessage = ({ attachments, content, replyTo }) => {
     replyTo,
     created_at: timestamp,
     message_type: MESSAGE_TYPE.INCOMING,
+    ...(newConversation ? { newConversation: true } : {}),
   };
 };
 
@@ -46,6 +52,11 @@ export const groupConversationBySender = conversationsForADate =>
 export const findUndeliveredMessage = (messageInbox, { content }) =>
   Object.values(messageInbox).filter(
     message => message.content === content && message.status === 'in_progress'
+  );
+
+export const hasPersistedMessages = conversations =>
+  Object.values(conversations || {}).some(
+    ({ status }) => !['in_progress', 'failed'].includes(status)
   );
 
 export const getNonDeletedMessages = ({ messages }) => {

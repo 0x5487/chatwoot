@@ -64,10 +64,21 @@ export default {
       );
     },
     closeWindow() {
+      if (this.isIframe) {
+        this.cancelNewConversation();
+      }
       if (IFrameHelper.isIFrame()) {
         IFrameHelper.sendMessage({ event: 'closeWindow' });
       } else if (RNHelper.isRNWebView) {
         RNHelper.sendMessage({ type: 'close-widget' });
+      }
+    },
+    cancelNewConversation() {
+      if (
+        this.$store.getters['conversation/getIsStartingNewConversation'] &&
+        !this.$store.getters['conversation/getIsSending']
+      ) {
+        this.$store.dispatch('conversation/cancelNewConversation');
       }
     },
     resolveConversation() {

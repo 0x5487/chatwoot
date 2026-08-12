@@ -7,8 +7,9 @@ import ChatInputWrap from 'widget/components/ChatInputWrap.vue';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { sendEmailTranscript } from 'widget/api/conversation';
 import { useRouter } from 'vue-router';
-import { IFrameHelper } from '../helpers/utils';
+import { IFrameHelper, RNHelper } from '../helpers/utils';
 import { CHATWOOT_ON_START_CONVERSATION } from '../constants/sdkEvents';
+import { isPopout } from '../helpers/urlParamsHelper';
 import { emitter } from 'shared/helpers/mitt';
 
 const TRANSCRIPT_COOLDOWN_MS = 15000;
@@ -58,6 +59,12 @@ export default {
         this.inReplyTo && (this.inReplyTo.content || this.inReplyTo.attachments)
       );
     },
+    isLegacyWidgetContext() {
+      return (
+        (!IFrameHelper.isIFrame() && isPopout(window.location.search)) ||
+        !!RNHelper.isRNWebView()
+      );
+    },
   },
   mounted() {
     emitter.on(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.toggleReplyTo);
@@ -67,6 +74,9 @@ export default {
   },
   methods: {
     ...mapActions('conversation', ['sendMessage', 'sendAttachment']),
+    ...mapActions('conversation', {
+      beginNewConversation: 'startNewConversation',
+    }),
     ...mapActions('conversationAttributes', ['getAttributes']),
     async handleSendMessage(content) {
       await this.sendMessage({
@@ -88,12 +98,18 @@ export default {
       this.inReplyTo = null;
     },
     startNewConversation() {
-      this.router.replace({ name: 'prechat-form' });
-      IFrameHelper.sendMessage({
-        event: 'onEvent',
-        eventIdentifier: CHATWOOT_ON_START_CONVERSATION,
-        data: { hasConversation: true },
-      });
+      if (this.isLegacyWidgetContext) {
+        this.router.replace({ name: 'prechat-form' });
+        IFrameHelper.sendMessage({
+          event: 'onEvent',
+          eventIdentifier: CHATWOOT_ON_START_CONVERSATION,
+          data: { hasConversation: true },
+        });
+        return;
+      }
+      this.inReplyTo = null;
+      this.beginNewConversation();
+      this.router.replace({ name: 'messages' });
     },
     toggleReplyTo(message) {
       this.inReplyTo = message;

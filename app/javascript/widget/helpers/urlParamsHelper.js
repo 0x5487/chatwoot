@@ -11,6 +11,9 @@ export const getLocale = (search = '') => {
   return new URLSearchParams(search).get('locale');
 };
 
+export const isPopout = (search = '') =>
+  new URLSearchParams(search).has('cw_conversation');
+
 export const buildPopoutURL = ({
   origin,
   conversationCookie,

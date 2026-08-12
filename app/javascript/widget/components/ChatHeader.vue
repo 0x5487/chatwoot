@@ -1,10 +1,12 @@
 <script setup>
 import { toRef } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import HeaderActions from './HeaderActions.vue';
 import AvailabilityContainer from 'widget/components/Availability/AvailabilityContainer.vue';
 import { useAvailability } from 'widget/composables/useAvailability';
+import { IFrameHelper } from 'widget/helpers/utils';
 
 const props = defineProps({
   avatarUrl: { type: String, default: '' },
@@ -17,9 +19,17 @@ const props = defineProps({
 const availableAgents = toRef(props, 'availableAgents');
 
 const router = useRouter();
+const store = useStore();
 const { isOnline } = useAvailability(availableAgents);
 
 const onBackButtonClick = () => {
+  if (
+    IFrameHelper.isIFrame() &&
+    store.getters['conversation/getIsStartingNewConversation'] &&
+    !store.getters['conversation/getIsSending']
+  ) {
+    store.dispatch('conversation/cancelNewConversation');
+  }
   router.replace({ name: 'home' });
 };
 </script>

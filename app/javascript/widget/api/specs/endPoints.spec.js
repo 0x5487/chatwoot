@@ -30,6 +30,14 @@ describe('#sendMessage', () => {
     });
     spy.mockRestore();
   });
+
+  it('requests a new conversation when explicitly requested', () => {
+    const result = endPoints.sendMessage('hello', null, {
+      newConversation: true,
+    });
+
+    expect(result.params.new_conversation).toBe(true);
+  });
 });
 
 describe('#createConversation', () => {
@@ -117,6 +125,17 @@ describe('#sendMessage with pending metadata', () => {
     expect(result.params.custom_attributes).toBeUndefined();
     expect(result.params.labels).toBeUndefined();
     spy.mockRestore();
+  });
+});
+
+describe('#sendAttachment with a new conversation request', () => {
+  it('adds the new conversation intent to the multipart payload', () => {
+    const result = endPoints.sendAttachment(
+      { attachment: { file: 'signed-id', thumbUrl: '', fileType: 'file' } },
+      { newConversation: true }
+    );
+
+    expect(result.params.get('new_conversation')).toBe('true');
   });
 });
 

@@ -12,8 +12,11 @@ const state = {
     isFetchingList: false,
     isAgentTyping: false,
     isCreating: false,
+    isStartingNewConversation: false,
+    isSending: false,
   },
   lastMessageId: null,
+  savedConversationState: null,
   pendingCustomAttributes: {},
   pendingLabels: [],
 };

@@ -1,6 +1,7 @@
 import {
   buildSearchParamsWithLocale,
   getLocale,
+  isPopout,
   buildPopoutURL,
 } from '../urlParamsHelper';
 
@@ -47,5 +48,12 @@ describe('#buildPopoutURL', () => {
     ).toEqual(
       'https://chatwoot.com/widget?cw_conversation=random-jwt-token&website_token=random-website-token&locale=ar'
     );
+  });
+});
+
+describe('#isPopout', () => {
+  it('detects the popout conversation parameter', () => {
+    expect(isPopout('?cw_conversation=token&website_token=website')).toBe(true);
+    expect(isPopout('?website_token=website')).toBe(false);
   });
 });

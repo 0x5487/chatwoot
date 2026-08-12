@@ -1,6 +1,7 @@
 import {
   findUndeliveredMessage,
   createTemporaryMessage,
+  hasPersistedMessages,
   getNonDeletedMessages,
 } from '../../conversation/helpers';
 
@@ -43,6 +44,21 @@ describe('#createTemporaryMessage', () => {
     expect(message.content).toBe('hello');
     expect(message.status).toBe('in_progress');
     expect(message.replyTo).toBe(124);
+  });
+});
+
+describe('#hasPersistedMessages', () => {
+  it('ignores optimistic messages', () => {
+    expect(
+      hasPersistedMessages({
+        temporary: { status: 'in_progress' },
+        failed: { status: 'failed' },
+      })
+    ).toBe(false);
+  });
+
+  it('recognizes a sent message', () => {
+    expect(hasPersistedMessages({ sent: { status: 'sent' } })).toBe(true);
   });
 });
 

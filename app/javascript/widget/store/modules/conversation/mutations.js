@@ -4,8 +4,65 @@ import { findUndeliveredMessage } from './helpers';
 export const mutations = {
   clearConversations($state) {
     $state.conversations = {};
+    $state.savedConversationState = null;
+    if ($state.uiFlags) {
+      $state.uiFlags.isStartingNewConversation = false;
+      $state.uiFlags.isSending = false;
+    }
     $state.pendingCustomAttributes = {};
     $state.pendingLabels = [];
+  },
+
+  startNewConversation($state) {
+    if ($state.savedConversationState) return;
+
+    $state.savedConversationState = {
+      conversations: $state.conversations,
+      meta: $state.meta,
+      lastMessageId: $state.lastMessageId,
+      uiFlags: {
+        allMessagesLoaded: $state.uiFlags.allMessagesLoaded,
+        isFetchingList: $state.uiFlags.isFetchingList,
+        isAgentTyping: $state.uiFlags.isAgentTyping,
+      },
+    };
+    $state.conversations = {};
+    $state.meta = { userLastSeenAt: undefined };
+    $state.lastMessageId = null;
+    $state.uiFlags = {
+      ...$state.uiFlags,
+      allMessagesLoaded: true,
+      isFetchingList: false,
+      isAgentTyping: false,
+      isStartingNewConversation: true,
+    };
+  },
+
+  cancelNewConversation($state) {
+    if (!$state.savedConversationState) {
+      $state.uiFlags.isStartingNewConversation = false;
+      $state.uiFlags.isSending = false;
+      return;
+    }
+
+    const { conversations, meta, lastMessageId, uiFlags } =
+      $state.savedConversationState;
+    $state.conversations = conversations;
+    $state.meta = meta;
+    $state.lastMessageId = lastMessageId;
+    $state.uiFlags = {
+      ...$state.uiFlags,
+      ...uiFlags,
+      isStartingNewConversation: false,
+      isSending: false,
+    };
+    $state.savedConversationState = null;
+  },
+
+  completeNewConversation($state) {
+    $state.savedConversationState = null;
+    $state.uiFlags.isStartingNewConversation = false;
+    $state.uiFlags.isSending = false;
   },
   pushMessageToConversation($state, message) {
     const { id, status, message_type: type } = message;

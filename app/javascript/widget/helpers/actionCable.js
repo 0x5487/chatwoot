@@ -7,6 +7,8 @@ import { CHATWOOT_ON_MESSAGE } from '../constants/sdkEvents';
 import { emitter } from '../../shared/helpers/mitt';
 
 const isMessageInActiveConversation = (getters, message) => {
+  if (getters['conversation/getIsStartingNewConversation']) return true;
+
   const { conversation_id: conversationId } = message;
   const activeConversationId =
     getters['conversationAttributes/getConversationParams'].id;
@@ -35,6 +37,10 @@ class ActionCableConnector extends BaseActionCableConnector {
   };
 
   onReconnect = () => {
+    if (this.app.$store.getters['conversation/getIsStartingNewConversation']) {
+      return;
+    }
+
     this.syncLatestMessages();
     // Re-fetch conversation attributes so a status change (e.g. auto-resolve)
     // that happened while disconnected is reflected, keeping the reply box state correct.
@@ -106,6 +112,10 @@ class ActionCableConnector extends BaseActionCableConnector {
   };
 
   onTypingOn = data => {
+    if (this.app.$store.getters['conversation/getIsStartingNewConversation']) {
+      return;
+    }
+
     const activeConversationId =
       this.app.$store.getters['conversationAttributes/getConversationParams']
         .id;

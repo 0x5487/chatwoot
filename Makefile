@@ -1,6 +1,9 @@
 # Variables
 APP_NAME := chatwoot
 RAILS_ENV ?= development
+LOCAL_COMPOSE_FILE := docker-compose.local.yaml
+LOCAL_COMPOSE_UP := docker compose --env-file .env -f $(LOCAL_COMPOSE_FILE) up -d --wait postgres redis
+RBENV_INIT := eval "$$(rbenv init -)"
 
 # Targets
 setup:
@@ -33,26 +36,30 @@ burn:
 	bundle && pnpm install
 
 run:
-	@if [ -f ./.overmind.sock ]; then \
+	@$(LOCAL_COMPOSE_UP)
+	@$(RBENV_INIT); \
+	if [ -f ./.overmind.sock ]; then \
 		echo "Overmind is already running. Use 'make force_run' to start a new instance."; \
 	else \
 		overmind start -f Procfile.dev; \
 	fi
 
 force_run:
+	@$(LOCAL_COMPOSE_UP)
 	@echo "Cleaning up Overmind processes..."
 	@lsof -ti:3036 2>/dev/null | xargs kill -9 2>/dev/null || true
 	@lsof -ti:3000 2>/dev/null | xargs kill -9 2>/dev/null || true
 	@rm -f ./.overmind.sock
 	@rm -f tmp/pids/*.pid
 	@echo "Cleanup complete"
-	overmind start -f Procfile.dev
+	@$(RBENV_INIT) && overmind start -f Procfile.dev
 
 force_run_tunnel:
+	@$(LOCAL_COMPOSE_UP)
 	lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 	rm -f ./.overmind.sock
 	rm -f tmp/pids/*.pid
-	overmind start -f Procfile.tunnel
+	@$(RBENV_INIT) && overmind start -f Procfile.tunnel
 
 debug:
 	overmind connect backend

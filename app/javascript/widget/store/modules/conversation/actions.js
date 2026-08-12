@@ -11,9 +11,54 @@ import {
 } from 'widget/api/conversation';
 
 import { ON_CONVERSATION_CREATED } from 'widget/constants/widgetBusEvents';
-import { createTemporaryMessage, getNonDeletedMessages } from './helpers';
+import {
+  createTemporaryMessage,
+  getNonDeletedMessages,
+  hasPersistedMessages,
+} from './helpers';
 import { emitter } from 'shared/helpers/mitt';
+import { IFrameHelper, RNHelper } from 'widget/helpers/utils';
+import { CHATWOOT_ON_START_CONVERSATION } from 'widget/constants/sdkEvents';
+import { isPopout } from 'widget/helpers/urlParamsHelper';
+
+const isLegacyWidgetContext = () =>
+  (!IFrameHelper.isIFrame() && isPopout(window.location.search)) ||
+  !!RNHelper.isRNWebView();
+
+const notifyConversationCreated = () => {
+  emitter.emit(ON_CONVERSATION_CREATED);
+  if (isLegacyWidgetContext()) return;
+
+  IFrameHelper.sendMessage({
+    event: 'onEvent',
+    eventIdentifier: CHATWOOT_ON_START_CONVERSATION,
+    data: { hasConversation: true },
+  });
+};
+
 export const actions = {
+  startNewConversation: ({ commit, dispatch }) => {
+    commit('startNewConversation');
+    dispatch('conversationAttributes/startNewConversation', {}, { root: true });
+  },
+  cancelNewConversation: ({ commit, dispatch, getters }) => {
+    if (getters.getIsSending) return;
+
+    commit('cancelNewConversation');
+    dispatch(
+      'conversationAttributes/cancelNewConversation',
+      {},
+      { root: true }
+    );
+  },
+  completeNewConversation: ({ commit, dispatch }) => {
+    commit('completeNewConversation');
+    dispatch(
+      'conversationAttributes/completeNewConversation',
+      {},
+      { root: true }
+    );
+  },
   createConversation: async ({ commit, dispatch }, params) => {
     commit('setConversationUIFlag', { isCreating: true });
     try {
@@ -23,7 +68,7 @@ export const actions = {
       commit('pushMessageToConversation', message);
       dispatch('conversationAttributes/getAttributes', {}, { root: true });
       // Emit event to notify that conversation is created and show the chat screen
-      emitter.emit(ON_CONVERSATION_CREATED);
+      notifyConversationCreated();
     } catch (error) {
       // Ignore error
     } finally {
@@ -32,23 +77,54 @@ export const actions = {
   },
   sendMessage: async ({ dispatch, state: conversationState }, params) => {
     const { content, replyTo } = params;
-    const message = createTemporaryMessage({ content, replyTo });
+    const newConversation =
+      conversationState.uiFlags?.isStartingNewConversation || false;
+    if (newConversation && conversationState.uiFlags?.isSending) {
+      return undefined;
+    }
+
+    const message = createTemporaryMessage({
+      content,
+      replyTo,
+      newConversation,
+    });
     const { pendingCustomAttributes, pendingLabels } = conversationState;
-    dispatch('sendMessageWithData', {
+    const sendMessageParams = {
       message,
       pendingCustomAttributes,
       pendingLabels,
-    });
+    };
+    if (newConversation) {
+      sendMessageParams.newConversation = true;
+    }
+    return dispatch('sendMessageWithData', sendMessageParams);
   },
   sendMessageWithData: async (
-    { commit },
-    { message, pendingCustomAttributes = {}, pendingLabels = [] }
+    { commit, dispatch, rootGetters, state: conversationState },
+    {
+      message,
+      pendingCustomAttributes = {},
+      pendingLabels = [],
+      newConversation = false,
+    }
   ) => {
     const { id, content, replyTo, meta = {} } = message;
+    const shouldCreateNewConversation =
+      newConversation || message.newConversation;
+    if (shouldCreateNewConversation && conversationState.uiFlags?.isSending) {
+      return undefined;
+    }
+
     const hasPendingMetadata =
       Object.keys(pendingCustomAttributes).length > 0 ||
       pendingLabels.length > 0;
+    const isFirstMessage =
+      !rootGetters?.['conversationAttributes/getConversationParams']?.id &&
+      !hasPersistedMessages(conversationState?.conversations);
 
+    if (shouldCreateNewConversation) {
+      commit('setConversationUIFlag', { isSending: true });
+    }
     commit('pushMessageToConversation', message);
     commit('updateMessageMeta', { id, meta: { ...meta, error: '' } });
     try {
@@ -57,6 +133,7 @@ export const actions = {
           ? pendingCustomAttributes
           : undefined,
         labels: hasPendingMetadata ? pendingLabels : undefined,
+        newConversation: shouldCreateNewConversation,
       });
       if (hasPendingMetadata) {
         commit('clearPendingConversationMetadata');
@@ -65,12 +142,29 @@ export const actions = {
       // [VITE] Don't delete this manually, since `pushMessageToConversation` does the replacement for us anyway
       // commit('deleteMessage', message.id);
       commit('pushMessageToConversation', { ...data, status: 'sent' });
+      if (isFirstMessage) {
+        commit('completeNewConversation');
+        dispatch(
+          'conversationAttributes/completeNewConversation',
+          {},
+          { root: true }
+        );
+        dispatch('conversationAttributes/getAttributes', {}, { root: true });
+        notifyConversationCreated();
+        return { conversationCreated: true, hasConversation: true };
+      }
+      return { conversationCreated: false, hasConversation: true };
     } catch (error) {
       commit('pushMessageToConversation', { ...message, status: 'failed' });
       commit('updateMessageMeta', {
         id,
         meta: { ...meta, error: '' },
       });
+      return undefined;
+    } finally {
+      if (shouldCreateNewConversation) {
+        commit('setConversationUIFlag', { isSending: false });
+      }
     }
   },
 
@@ -78,11 +172,20 @@ export const actions = {
     commit('setLastMessageId');
   },
 
-  sendAttachment: async ({ commit, state: conversationState }, params) => {
+  sendAttachment: async (
+    { commit, dispatch, rootGetters, state: conversationState },
+    params
+  ) => {
     const {
       attachment: { thumbUrl, fileType },
       meta = {},
     } = params;
+    const newConversation =
+      conversationState.uiFlags?.isStartingNewConversation || false;
+    if (newConversation && conversationState.uiFlags?.isSending) {
+      return undefined;
+    }
+
     const attachment = {
       thumb_url: thumbUrl,
       data_url: thumbUrl,
@@ -92,12 +195,19 @@ export const actions = {
     const tempMessage = createTemporaryMessage({
       attachments: [attachment],
       replyTo: params.replyTo,
+      newConversation,
     });
+    const isFirstMessage =
+      !rootGetters?.['conversationAttributes/getConversationParams']?.id &&
+      !hasPersistedMessages(conversationState.conversations);
     const { pendingCustomAttributes, pendingLabels } = conversationState;
     const hasPendingMetadata =
       Object.keys(pendingCustomAttributes).length > 0 ||
       pendingLabels.length > 0;
 
+    if (newConversation) {
+      commit('setConversationUIFlag', { isSending: true });
+    }
     commit('pushMessageToConversation', tempMessage);
     try {
       const { data } = await sendAttachmentAPI(params, {
@@ -105,6 +215,7 @@ export const actions = {
           ? pendingCustomAttributes
           : undefined,
         labels: hasPendingMetadata ? pendingLabels : undefined,
+        newConversation,
       });
       if (hasPendingMetadata) {
         commit('clearPendingConversationMetadata');
@@ -114,6 +225,16 @@ export const actions = {
         tempId: tempMessage.id,
       });
       commit('pushMessageToConversation', { ...data, status: 'sent' });
+      if (isFirstMessage) {
+        commit('completeNewConversation');
+        dispatch(
+          'conversationAttributes/completeNewConversation',
+          {},
+          { root: true }
+        );
+        dispatch('conversationAttributes/getAttributes', {}, { root: true });
+        notifyConversationCreated();
+      }
     } catch (error) {
       commit('pushMessageToConversation', { ...tempMessage, status: 'failed' });
       commit('updateMessageMeta', {
@@ -121,7 +242,12 @@ export const actions = {
         meta: { ...meta, error: '' },
       });
       // Show error
+    } finally {
+      if (newConversation) {
+        commit('setConversationUIFlag', { isSending: false });
+      }
     }
+    return undefined;
   },
   fetchOldConversations: async ({ commit }, { before } = {}) => {
     try {
@@ -139,7 +265,9 @@ export const actions = {
     }
   },
 
-  syncLatestMessages: async ({ state, commit }) => {
+  syncLatestMessages: async ({ state, commit, rootGetters }) => {
+    if (rootGetters?.['conversation/getIsStartingNewConversation']) return;
+
     try {
       const { lastMessageId, conversations } = state;
 

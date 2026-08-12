@@ -6,6 +6,9 @@ import { formatUnixDate } from 'shared/helpers/DateHelper';
 export const getters = {
   getAllMessagesLoaded: _state => _state.uiFlags.allMessagesLoaded,
   getIsCreating: _state => _state.uiFlags.isCreating,
+  getIsStartingNewConversation: _state =>
+    _state.uiFlags.isStartingNewConversation,
+  getIsSending: _state => _state.uiFlags.isSending,
   getIsAgentTyping: _state => _state.uiFlags.isAgentTyping,
   getConversation: _state => _state.conversations,
   getConversationSize: _state => Object.keys(_state.conversations).length,

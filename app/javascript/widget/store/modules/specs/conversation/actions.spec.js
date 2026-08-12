@@ -152,6 +152,44 @@ describe('#actions', () => {
         pendingLabels: ['vip'],
       });
     });
+
+    it('marks the first message as starting a new conversation', async () => {
+      const mockDate = new Date(1466424490000);
+      getUuid.mockImplementationOnce(() => '3333');
+      const spy = vi.spyOn(global, 'Date').mockImplementation(() => mockDate);
+      const state = {
+        pendingCustomAttributes: {},
+        pendingLabels: [],
+        uiFlags: { isStartingNewConversation: true },
+      };
+
+      await actions.sendMessage(
+        { commit, dispatch, state },
+        { content: 'new thread' }
+      );
+
+      spy.mockRestore();
+      expect(dispatch).toBeCalledWith(
+        'sendMessageWithData',
+        expect.objectContaining({ newConversation: true })
+      );
+    });
+
+    it('does not dispatch while a message request is in progress', async () => {
+      const localDispatch = vi.fn();
+      const state = {
+        pendingCustomAttributes: {},
+        pendingLabels: [],
+        uiFlags: { isStartingNewConversation: true, isSending: true },
+      };
+
+      await actions.sendMessage(
+        { commit: vi.fn(), dispatch: localDispatch, state },
+        { content: 'second message' }
+      );
+
+      expect(localDispatch).not.toHaveBeenCalled();
+    });
   });
 
   describe('#sendAttachment', () => {
@@ -184,6 +222,129 @@ describe('#actions', () => {
           },
         ],
       });
+    });
+  });
+
+  describe('#sendMessageWithData', () => {
+    it('does not send while another message request is in progress', async () => {
+      API.post.mockClear();
+      const state = {
+        conversations: {},
+        uiFlags: { isStartingNewConversation: true, isSending: true },
+      };
+
+      const result = await actions.sendMessageWithData(
+        { commit: vi.fn(), dispatch: vi.fn(), state },
+        {
+          message: {
+            id: 'temporary-id',
+            content: 'second message',
+            status: 'in_progress',
+            newConversation: true,
+          },
+        }
+      );
+
+      expect(result).toBeUndefined();
+      expect(API.post).not.toHaveBeenCalled();
+    });
+
+    it('does not block a regular message while a replacement request is in progress', async () => {
+      API.post.mockResolvedValue({
+        data: {
+          id: 11,
+          content: 'second message',
+          message_type: 0,
+          status: 'sent',
+        },
+      });
+      const state = {
+        conversations: {
+          10: { id: 10, status: 'sent' },
+        },
+        uiFlags: { isSending: true },
+      };
+      window.WOOT_WIDGET = {
+        $root: { $i18n: { locale: 'en' } },
+      };
+
+      await actions.sendMessageWithData(
+        {
+          commit: vi.fn(),
+          dispatch: vi.fn(),
+          rootGetters: {
+            'conversationAttributes/getConversationParams': { id: 1 },
+          },
+          state,
+        },
+        {
+          message: {
+            id: 'temporary-id',
+            content: 'second message',
+            status: 'in_progress',
+          },
+        }
+      );
+
+      expect(API.post).toHaveBeenCalled();
+    });
+
+    it('sends the replacement intent and reports a created conversation', async () => {
+      API.post.mockResolvedValue({
+        data: {
+          id: 10,
+          content: 'new thread',
+          message_type: 0,
+          status: 'sent',
+        },
+      });
+      const localCommit = vi.fn();
+      const localDispatch = vi.fn();
+      const state = {
+        conversations: {},
+        uiFlags: { isStartingNewConversation: true },
+      };
+      window.WOOT_WIDGET = {
+        $root: { $i18n: { locale: 'en' } },
+      };
+
+      const result = await actions.sendMessageWithData(
+        { commit: localCommit, dispatch: localDispatch, state },
+        {
+          message: {
+            id: 'temporary-id',
+            content: 'new thread',
+            message_type: 0,
+            status: 'in_progress',
+          },
+          newConversation: true,
+        }
+      );
+
+      expect(API.post).toHaveBeenCalledWith(
+        expect.stringContaining('/api/v1/widget/messages'),
+        expect.objectContaining({ new_conversation: true })
+      );
+      expect(result).toEqual({
+        conversationCreated: true,
+        hasConversation: true,
+      });
+    });
+  });
+
+  describe('#cancelNewConversation', () => {
+    it('does not restore the previous conversation while sending', () => {
+      const localCommit = vi.fn();
+      const localDispatch = vi.fn();
+
+      actions.cancelNewConversation({
+        commit: localCommit,
+        dispatch: localDispatch,
+        getters: { getIsSending: true },
+      });
+
+      expect(localCommit).not.toHaveBeenCalled();
+      expect(localDispatch).not.toHaveBeenCalled();
     });
   });
 
@@ -306,6 +467,28 @@ describe('#actions', () => {
   });
 
   describe('#syncLatestMessages', () => {
+    it('does not sync the previous conversation while starting a new one', async () => {
+      const localCommit = vi.fn();
+      const state = {
+        conversations: {},
+        lastMessageId: null,
+      };
+
+      await actions.syncLatestMessages(
+        {
+          state,
+          commit: localCommit,
+          rootGetters: {
+            'conversation/getIsStartingNewConversation': true,
+          },
+        },
+        {}
+      );
+
+      expect(API.get).not.toHaveBeenCalled();
+      expect(localCommit).not.toHaveBeenCalled();
+    });
+
     it('latest message should append to end of list', async () => {
       const state = {
         uiFlags: { allMessagesLoaded: false },

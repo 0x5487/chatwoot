@@ -85,7 +85,18 @@ export default {
   },
   methods: {
     closeWindow() {
+      if (IFrameHelper.isIFrame()) {
+        this.cancelNewConversation();
+      }
       IFrameHelper.sendMessage({ event: 'closeWindow' });
+    },
+    cancelNewConversation() {
+      if (
+        this.$store.getters['conversation/getIsStartingNewConversation'] &&
+        !this.$store.getters['conversation/getIsSending']
+      ) {
+        this.$store.dispatch('conversation/cancelNewConversation');
+      }
     },
     updateScrollPosition(event) {
       this.scrollPosition = event.target.scrollTop;

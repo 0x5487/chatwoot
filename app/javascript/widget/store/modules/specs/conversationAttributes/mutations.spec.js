@@ -38,7 +38,18 @@ describe('#mutations', () => {
         id: 1,
         status: 'open',
       });
-      expect(state).toEqual({ id: '', status: '' });
+      expect(state).toEqual({ id: '', status: '', previous: null });
+    });
+  });
+
+  describe('#START_NEW_CONVERSATION and #CANCEL_NEW_CONVERSATION', () => {
+    it('restores the previous conversation attributes when cancelled', () => {
+      const state = { id: 1, status: 'resolved', previous: null };
+
+      mutations.START_NEW_CONVERSATION(state);
+      mutations.CANCEL_NEW_CONVERSATION(state);
+
+      expect(state).toEqual({ id: 1, status: 'resolved', previous: null });
     });
   });
 });

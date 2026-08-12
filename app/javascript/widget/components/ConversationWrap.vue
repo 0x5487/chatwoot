@@ -6,6 +6,7 @@ import Spinner from 'shared/components/Spinner.vue';
 import { useDarkMode } from 'widget/composables/useDarkMode';
 import { MESSAGE_TYPE } from 'shared/constants/messages';
 import { mapActions, mapGetters } from 'vuex';
+import WelcomePrompt from 'widget/components/WelcomePrompt.vue';
 
 export default {
   name: 'ConversationWrap',
@@ -14,11 +15,16 @@ export default {
     AgentTypingBubble,
     DateSeparator,
     Spinner,
+    WelcomePrompt,
   },
   props: {
     groupedMessages: {
       type: Array,
       default: () => [],
+    },
+    welcomeMessage: {
+      type: String,
+      default: '',
     },
   },
   setup() {
@@ -29,6 +35,7 @@ export default {
     return {
       previousScrollHeight: 0,
       previousConversationSize: 0,
+      initialScrollPositionSet: false,
     };
   },
   computed: {
@@ -56,13 +63,22 @@ export default {
     },
   },
   watch: {
-    allMessagesLoaded() {
+    allMessagesLoaded(value) {
       this.previousScrollHeight = 0;
+      if (
+        value &&
+        !this.conversationSize &&
+        this.welcomeMessage &&
+        !this.initialScrollPositionSet
+      ) {
+        this.initialScrollPositionSet = true;
+      }
     },
   },
   mounted() {
     this.$el.addEventListener('scroll', this.handleScroll);
     this.scrollToBottom();
+    this.previousConversationSize = this.conversationSize;
   },
   updated() {
     if (this.previousConversationSize !== this.conversationSize) {
@@ -76,6 +92,14 @@ export default {
   methods: {
     ...mapActions('conversation', ['fetchOldConversations']),
     scrollToBottom() {
+      if (this.welcomeMessage && !this.initialScrollPositionSet) {
+        this.$el.scrollTop = 0;
+        this.previousScrollHeight = 0;
+        if (this.conversationSize || this.allMessagesLoaded) {
+          this.initialScrollPositionSet = true;
+        }
+        return;
+      }
       const container = this.$el;
       container.scrollTop = container.scrollHeight - this.previousScrollHeight;
       this.previousScrollHeight = 0;
@@ -100,6 +124,7 @@ export default {
 
 <template>
   <div class="conversation--container" :class="colorSchemeClass">
+    <WelcomePrompt :message="welcomeMessage" />
     <div class="conversation-wrap" :class="{ 'is-typing': isAgentTyping }">
       <div v-if="isFetchingList" class="message--loader">
         <Spinner />

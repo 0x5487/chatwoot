@@ -84,6 +84,80 @@ RSpec.describe '/api/v1/widget/messages', type: :request do
         expect(new_conversation.label_list).to include('vip')
       end
 
+      it 'creates a new conversation when explicitly requested after resolution' do
+        web_widget.inbox.update!(allow_messages_after_resolved: false)
+        conversation.resolved!
+        message_params = { content: 'hello again', timestamp: Time.current }
+
+        post api_v1_widget_messages_url,
+             params: {
+               website_token: web_widget.website_token,
+               new_conversation: true,
+               message: message_params
+             },
+             headers: { 'X-Auth-Token' => token },
+             as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(contact.conversations.count).to eq(2)
+        expect(conversation.reload).to be_resolved
+        expect(response.parsed_body['content']).to eq('hello again')
+        expect(contact.conversations.last.messages.exists?(content: 'hello again')).to be(true)
+      end
+
+      it 'rejects messages to a resolved conversation when continuation is disabled' do
+        web_widget.inbox.update!(allow_messages_after_resolved: false)
+        conversation.resolved!
+        message_params = { content: 'not allowed', timestamp: Time.current }
+
+        post api_v1_widget_messages_url,
+             params: { website_token: web_widget.website_token, message: message_params },
+             headers: { 'X-Auth-Token' => token },
+             as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(contact.conversations.count).to eq(1)
+        expect(conversation.reload).to be_resolved
+      end
+
+      it 'rejects an explicit false replacement request when continuation is disabled' do
+        web_widget.inbox.update!(allow_messages_after_resolved: false)
+        conversation.resolved!
+        message_params = { content: 'not allowed', timestamp: Time.current }
+
+        post api_v1_widget_messages_url,
+             params: {
+               website_token: web_widget.website_token,
+               new_conversation: false,
+               message: message_params
+             },
+             headers: { 'X-Auth-Token' => token },
+             as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(contact.conversations.count).to eq(1)
+        expect(conversation.reload).to be_resolved
+      end
+
+      it 'keeps the resolved conversation when replacement is requested but continuation is allowed' do
+        web_widget.inbox.update!(allow_messages_after_resolved: true)
+        conversation.resolved!
+        message_params = { content: 'continue here', timestamp: Time.current }
+
+        post api_v1_widget_messages_url,
+             params: {
+               website_token: web_widget.website_token,
+               new_conversation: true,
+               message: message_params
+             },
+             headers: { 'X-Auth-Token' => token },
+             as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(contact.conversations.count).to eq(1)
+        expect(conversation.reload).to be_open
+      end
+
       it 'ignores invalid labels when creating conversation with first message' do
         conversation.destroy!
         create(:label, title: 'valid-label', account: account)
@@ -172,6 +246,27 @@ RSpec.describe '/api/v1/widget/messages', type: :request do
 
         expect(conversation.messages.last.attachments.first.file.present?).to be(true)
         expect(conversation.messages.last.attachments.first.file_type).to eq('image')
+      end
+
+      it 'creates an attachment in a new conversation after resolution' do
+        web_widget.inbox.update!(allow_messages_after_resolved: false)
+        conversation.resolved!
+        file = fixture_file_upload(Rails.root.join('spec/assets/avatar.png'), 'image/png')
+        message_params = { timestamp: Time.current, attachments: [file] }
+
+        post api_v1_widget_messages_url,
+             params: {
+               website_token: web_widget.website_token,
+               new_conversation: true,
+               message: message_params
+             },
+             headers: { 'X-Auth-Token' => token }
+
+        expect(response).to have_http_status(:success)
+        expect(contact.conversations.count).to eq(2)
+        expect(conversation.reload).to be_resolved
+        new_conversation = contact.conversations.order(:created_at).last
+        expect(new_conversation.attachments.first.file.present?).to be(true)
       end
 
       it 'does not reopen conversation when conversation is muted' do

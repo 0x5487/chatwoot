@@ -43,10 +43,28 @@ class Api::V1::Widget::MessagesController < Api::V1::Widget::BaseController
   end
 
   def set_conversation
-    return unless conversation.nil?
+    return create_conversation_for_message if conversation.nil? || new_conversation_allowed?
+    return head :forbidden if resolved_conversation_disallowed?
+  end
 
+  def create_conversation_for_message
     @conversation = create_conversation
     apply_labels if permitted_params[:labels].present?
+    true
+  end
+
+  def resolved_conversation_disallowed?
+    conversation.resolved? && !inbox.allow_messages_after_resolved?
+  end
+
+  def new_conversation_allowed?
+    return false unless new_conversation_requested?
+
+    conversation.resolved? && !inbox.allow_messages_after_resolved?
+  end
+
+  def new_conversation_requested?
+    ActiveModel::Type::Boolean.new.cast(permitted_params[:new_conversation])
   end
 
   def apply_labels
@@ -74,7 +92,7 @@ class Api::V1::Widget::MessagesController < Api::V1::Widget::BaseController
     # timestamp parameter is used in create conversation method
     # custom_attributes and labels are applied when a new conversation is created alongside the first message
     params.permit(
-      :id, :before, :after, :website_token,
+      :id, :before, :after, :website_token, :new_conversation,
       contact: [:name, :email],
       message: [:content, :referer_url, :timestamp, :echo_id, :reply_to],
       custom_attributes: {},

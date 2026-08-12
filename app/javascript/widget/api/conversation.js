@@ -9,22 +9,24 @@ const createConversationAPI = async content => {
 const sendMessageAPI = async (
   content,
   replyTo = null,
-  { customAttributes, labels } = {}
+  { customAttributes, labels, newConversation } = {}
 ) => {
   const urlData = endPoints.sendMessage(content, replyTo, {
     customAttributes,
     labels,
+    newConversation,
   });
   return API.post(urlData.url, urlData.params);
 };
 
 const sendAttachmentAPI = async (
   attachment,
-  { customAttributes, labels } = {}
+  { customAttributes, labels, newConversation } = {}
 ) => {
   const urlData = endPoints.sendAttachment(attachment, {
     customAttributes,
     labels,
+    newConversation,
   });
   return API.post(urlData.url, urlData.params);
 };
