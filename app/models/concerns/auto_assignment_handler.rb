@@ -3,28 +3,33 @@ module AutoAssignmentHandler
   include Events::Types
 
   included do
-    after_save :run_auto_assignment
+    after_save :detect_and_run_auto_assignment
+    after_commit :trigger_auto_assignment_v2_after_commit, on: [:create, :update]
   end
 
   private
 
-  def run_auto_assignment
+  def detect_and_run_auto_assignment
     # Assignment V2: Also trigger assignment when conversation is resolved or snoozed,
     # bypassing the open-only condition so the AssignmentJob can redistribute capacity.
     return unless conversation_status_changed_to_open? || conversation_status_changed_to_resolved_or_snoozed?
     return unless should_run_auto_assignment?
 
     if inbox.auto_assignment_v2_enabled?
-      # Coalesces bursts of triggers per inbox. Fine if the job runs even when the
-      # surrounding save rolls back: it only scans the inbox's current unassigned
-      # conversations, so running it for an uncommitted change is harmless.
-      AutoAssignment::AssignmentJob.enqueue_for_inbox(inbox.id)
+      @run_auto_assignment_after_commit = true
     else
       # Use legacy assignment system
       # If conversation has a team, only consider team members for assignment
       allowed_agent_ids = team_id.present? ? team_member_ids_with_capacity : inbox.member_ids_with_assignment_capacity
       AutoAssignment::AgentAssignmentService.new(conversation: self, allowed_agent_ids: allowed_agent_ids).perform
     end
+  end
+
+  def trigger_auto_assignment_v2_after_commit
+    return unless @run_auto_assignment_after_commit
+
+    @run_auto_assignment_after_commit = nil
+    AutoAssignment::AssignmentJob.enqueue_for_inbox(inbox.id)
   end
 
   def conversation_status_changed_to_resolved_or_snoozed?

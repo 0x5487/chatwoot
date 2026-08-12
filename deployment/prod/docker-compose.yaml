@@ -1,0 +1,83 @@
+# Production Stateless Architecture (App Layer: Chatwoot & MaxKB)
+# Connects to external infrastructure (AWS RDS/ElastiCache/S3 in AWS OR docker-compose.infra.yaml locally)
+
+services:
+  base: &base
+    image: chatwoot/chatwoot:v4.16.2
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data/GeoLite2-City.mmdb:/app/vendor/db/GeoLiteCity.mmdb
+      - ./config/routes.rb:/app/config/routes.rb
+      - ./app/models/concerns/auto_assignment_handler.rb:/app/app/models/concerns/auto_assignment_handler.rb
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 1
+      net.ipv6.conf.default.disable_ipv6: 1
+
+  prepare:
+    <<: *base
+    container_name: chatwoot_prepare
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 'db:chatwoot_prepare']
+    restart: "no"
+
+  rails:
+    <<: *base
+    container_name: chatwoot_rails
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    restart: always
+
+  sidekiq:
+    <<: *base
+    container_name: chatwoot_sidekiq
+    depends_on:
+      prepare:
+        condition: service_completed_successfully
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    restart: always
+
+  maxkb:
+    image: jasonsoft/maxkb:latest
+    container_name: maxkb
+    ports:
+      - '8080:8080'
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data/maxkb:/opt/maxkb
+      - ./data/maxkb/sandbox/:/opt/maxkb-app/data/sandbox
+    env_file: .env
+    environment:
+      - TZ=Asia/Taipei
+      # PostgreSQL Connection (Database: maxkb)
+      - MAXKB_DB_HOST=${POSTGRES_HOST}
+      - MAXKB_DB_PORT=${POSTGRES_PORT:-5432}
+      - MAXKB_DB_NAME=maxkb
+      - MAXKB_DB_USER=${POSTGRES_USERNAME}
+      - MAXKB_DB_PASSWORD=${POSTGRES_PASSWORD}
+      # Redis Connection (DB 1)
+      - MAXKB_REDIS_HOST=${REDIS_HOST}
+      - MAXKB_REDIS_PORT=${REDIS_PORT:-6379}
+      - MAXKB_REDIS_DB=1
+      - MAXKB_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MAXKB_SANDBOX=0
+
+
+
