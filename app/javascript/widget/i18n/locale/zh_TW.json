@@ -97,7 +97,7 @@
   },
   "WELCOME_PROMPT": {
     "QUICK_ACTIONS_TITLE": "快捷入口",
-    "SUGGESTED_QUESTIONS_TITLE": "猜你想問"
+    "SUGGESTED_QUESTIONS_TITLE": "常見想問"
   },
   "FILE_SIZE_LIMIT": "{MAXIMUM_FILE_UPLOAD_SIZE} 已超出檔案大小限制",
   "CHAT_FORM": {

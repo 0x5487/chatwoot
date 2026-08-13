@@ -54,6 +54,7 @@ describe('welcome prompt helpers', () => {
       '🤝',
       '❓',
       '🎧',
+      '🧾',
     ]);
     expect(getWelcomePromptIconEmoji('document')).toBe('💵');
   });

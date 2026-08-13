@@ -73,15 +73,9 @@ const selectSuggestion = async text => {
     v-show="isPromptVisible"
     class="welcome-prompt px-3 pb-3 pt-4 text-sm leading-5 text-n-slate-12"
   >
-    <div v-if="message.trim()" class="flex items-start gap-2">
+    <div v-if="message.trim()" class="flex items-start">
       <div
-        class="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-n-slate-4 text-n-slate-12"
-        aria-hidden="true"
-      >
-        <FluentIcon icon="chat" size="16" />
-      </div>
-      <div
-        class="max-w-[calc(100%-2.25rem)] rounded-2xl rounded-tl-md bg-n-slate-3 px-3 py-2 text-sm text-n-slate-12"
+        class="max-w-full rounded-2xl rounded-tl-md bg-n-slate-3 px-3 py-2 text-sm text-n-slate-12"
       >
         <div
           v-dompurify-html="formattedMessage"

@@ -1096,7 +1096,8 @@
             "GAME": "Game",
             "PARTNERSHIP": "Partnership",
             "FAQ": "FAQ",
-            "HUMAN_AGENT": "Human agent"
+            "HUMAN_AGENT": "Human agent",
+            "ORDER": "Order"
           }
         }
       },
