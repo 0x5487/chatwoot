@@ -96,7 +96,7 @@ const selectSuggestion = async text => {
           v-for="(action, index) in configuredQuickActions"
           :key="`${action.label}-${index}`"
           type="button"
-          class="flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border border-n-slate-4 bg-n-background px-1 py-2 text-center text-xs text-n-slate-12 transition hover:border-n-brand hover:bg-n-slate-2"
+          class="flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border border-n-slate-10 bg-n-background px-1 py-2 text-center text-xs text-n-slate-12 transition hover:border-n-brand hover:bg-n-slate-2"
           :aria-label="action.label"
           :disabled="isSendingSuggestion"
           @click="selectSuggestion(action.label)"
