@@ -39,9 +39,10 @@ burn:
 run:
 	@$(LOCAL_COMPOSE_UP)
 	@$(RBENV_INIT); \
-	if [ -f ./.overmind.sock ]; then \
+	if overmind status >/dev/null 2>&1; then \
 		echo "Overmind is already running. Use 'make force_run' to start a new instance."; \
 	else \
+		rm -f ./.overmind.sock; \
 		overmind start -f Procfile.dev; \
 	fi
 
